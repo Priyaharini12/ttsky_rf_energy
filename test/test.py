@@ -6,31 +6,31 @@ async def rf_energy_test(dut):
 
     dut._log.info("Starting RF Energy Harvesting SoC Test")
 
-    # Reset
-    dut.reset.value = 1
-    dut.rf_energy.value = 0
+    # Reset (active low in Tiny Tapeout)
+    dut.rst_n.value = 0
+    dut.ui_in.value = 0
     await Timer(20, units="ns")
-    dut.reset.value = 0
+    dut.rst_n.value = 1
 
     # Phase 1: No energy
-    dut.rf_energy.value = 0
+    dut.ui_in.value = 0
     await Timer(50, units="ns")
 
     # Phase 2: Low energy
-    dut.rf_energy.value = 25
+    dut.ui_in.value = 25
     await Timer(50, units="ns")
 
     # Phase 3: Medium energy
-    dut.rf_energy.value = 60
+    dut.ui_in.value = 60
     await Timer(50, units="ns")
 
     # Phase 4: High energy
-    dut.rf_energy.value = 90
+    dut.ui_in.value = 90
     await Timer(50, units="ns")
 
-    # Random stress test
+    # Noise test
     for i in range(10):
-        dut.rf_energy.value = (i * 13) % 100
+        dut.ui_in.value = (i * 17) % 100
         await Timer(10, units="ns")
 
-    dut._log.info("Test completed")
+    dut._log.info("Test completed successfully")
